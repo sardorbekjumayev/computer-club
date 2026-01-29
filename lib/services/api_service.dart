@@ -8,7 +8,7 @@ class ApiService {
 
   static Future<List<ComputerClub>> fetchNearbyClubs(double lat, double lng) async {
     try {
-      final url = '$baseUrl/nearby.php?lat=41.316425&lng=69.296026';
+      final url = '$baseUrl/nearby.php?lat=$lat&lng=$lng';
       debugPrint('--- API REQUEST (Nearby) ---');
       debugPrint('URL: $url');
       
