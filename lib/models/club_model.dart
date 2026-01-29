@@ -10,18 +10,28 @@ class ClubTariff {
     required this.description,
     required this.icon,
   });
+
+  factory ClubTariff.fromJson(Map<String, dynamic> json) {
+    return ClubTariff(
+      title: json['title'] ?? '',
+      price: json['price']?.toString() ?? '',
+      description: json['duration']?.toString() ?? '',
+      icon: 'payments',
+    );
+  }
 }
 
 class ComputerClub {
   final String id;
   final String name;
-  final double distance; // in km
+  final double distance;
   final List<String> imageUrls;
   final List<ClubTariff> tariffs;
   final String address;
   final double rating;
   final double lat;
   final double lng;
+  final String? description;
 
   ComputerClub({
     required this.id,
@@ -33,7 +43,30 @@ class ComputerClub {
     required this.rating,
     required this.lat,
     required this.lng,
+    this.description,
   });
+
+  factory ComputerClub.fromJson(Map<String, dynamic> json) {
+    return ComputerClub(
+      id: json['id']?.toString() ?? '',
+      name: json['name'] ?? '',
+      distance: _parseDouble(json['distance']),
+      lat: _parseDouble(json['latitude']),
+      lng: _parseDouble(json['longitude']),
+      imageUrls: (json['images'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      tariffs: (json['tariffs'] as List?)?.map((e) => ClubTariff.fromJson(e)).toList() ?? [],
+      address: json['description'] ?? json['address'] ?? '',
+      rating: 4.5,
+      description: json['description'],
+    );
+  }
+
+  static double _parseDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
+  }
 }
 
 final List<ComputerClub> mockClubs = [

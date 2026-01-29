@@ -4,6 +4,7 @@ import '../models/club_model.dart';
 import '../services/location_service.dart';
 import '../widgets/club_card.dart';
 import '../theme/app_theme.dart';
+import '../services/api_service.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({super.key});
@@ -40,17 +41,19 @@ class _SearchViewState extends State<SearchView> {
         });
         _showGpsModal();
       } else {
-        // Permission denied or other error
         setState(() {
           _results = [];
           _isLoading = false;
         });
       }
     } else {
-      // Mock delay for "searching"
-      await Future.delayed(const Duration(seconds: 1));
+      final clubs = await ApiService.fetchNearbyClubs(
+        position.latitude,
+        position.longitude,
+      );
+      
       setState(() {
-        _results = mockClubs;
+        _results = clubs;
         _isLoading = false;
       });
     }
@@ -124,7 +127,7 @@ class _SearchViewState extends State<SearchView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const CircularProgressIndicator(color: AppTheme.neonPurple),
+                   CircularProgressIndicator(color: AppTheme.neonPurple),
                   const SizedBox(height: 16),
                   const Text('Scanning area...', style: TextStyle(color: Colors.grey)),
                 ],
@@ -148,7 +151,7 @@ class _SearchViewState extends State<SearchView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_off, size: 100, color: Colors.grey.withValues(alpha: 0.3)),
+            Icon(Icons.search_off, size: 100, color: Colors.grey.withAlpha(80)),
             const SizedBox(height: 24),
             Text(
               message,

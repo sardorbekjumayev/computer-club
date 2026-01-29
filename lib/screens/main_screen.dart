@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import 'search_view.dart';
+import 'map_view.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -13,7 +14,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 1;
 
   final List<Widget> _pages = [
-    const Center(child: Text('Map View (Coming Soon)', style: TextStyle(color: Colors.white))),
+    const MapView(),
     const SearchView(),
     const Center(child: Text('Order View', style: TextStyle(color: Colors.white))),
   ];

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../models/club_model.dart';
 import '../theme/app_theme.dart';
 import '../screens/tariffs_screen.dart';
@@ -21,20 +22,25 @@ class ClubCard extends StatelessWidget {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: Stack(
               children: [
-                CarouselSlider(
-                  options: CarouselOptions(
-                    height: 200,
-                    viewportFraction: 1.0,
-                    enableInfiniteScroll: false,
-                  ),
-                  items: club.imageUrls.map((url) {
-                    return Image.network(
-                      url,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                    );
-                  }).toList(),
-                ),
+                if (club.imageUrls.isNotEmpty)
+                  CarouselSlider(
+                    options: CarouselOptions(
+                      height: 200,
+                      viewportFraction: 1.0,
+                      enableInfiniteScroll: false,
+                    ),
+                    items: club.imageUrls.map((url) {
+                      return Image.network(
+                        url,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+                      );
+                    }).toList(),
+                  )
+                else
+                  _buildPlaceholder(),
+                
                 Positioned(
                   top: 12,
                   right: 12,
@@ -68,13 +74,16 @@ class ClubCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      club.name,
-                      style: AppTheme.theme.textTheme.headlineMedium?.copyWith(fontSize: 20),
+                    Expanded(
+                      child: Text(
+                        club.name,
+                        style: AppTheme.theme.textTheme.headlineMedium?.copyWith(fontSize: 20),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     Text(
-                      '${club.distance} km',
-                      style: TextStyle(color: AppTheme.neonGreen, fontWeight: FontWeight.bold),
+                      '${club.distance.toStringAsFixed(1)} km',
+                      style: const TextStyle(color: AppTheme.neonGreen, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -85,8 +94,10 @@ class ClubCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        club.address,
-                        style: AppTheme.theme.textTheme.bodyMedium,
+                        club.address.isNotEmpty ? club.address : 'Address not provided',
+                        style: AppTheme.theme.textTheme.bodyMedium?.copyWith(
+                          color: club.address.isEmpty ? Colors.grey.withAlpha(100) : Colors.grey,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -111,6 +122,24 @@ class ClubCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      height: 200,
+      width: double.infinity,
+      color: AppTheme.cardBg,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.image_not_supported, size: 48, color: Colors.white.withAlpha(30)),
+            const SizedBox(height: 8),
+            Text('No images available', style: TextStyle(color: Colors.white.withAlpha(50), fontSize: 12)),
+          ],
+        ),
       ),
     );
   }
